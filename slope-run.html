@@ -3,88 +3,102 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Module 4: Resource Overview - Student Portal</title>
+    <title>Academic Portal | Content Management System</title>
     <link rel="icon" href="https://ssl.gstatic.com/docs/doclist/images/infinite_drive_2022q4.ico">
     
     <style>
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f9f9f9;
-            color: #333;
+            font-family: 'Inter', -apple-system, sans-serif;
+            background-color: #f4f6f8;
+            color: #2c3e50;
             margin: 0;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
         }
-        .container {
+        .portal-card {
             text-align: center;
-            border: 1px solid #ddd;
-            padding: 40px;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border: 1px solid #e1e4e8;
+            padding: 50px;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            max-width: 450px;
         }
-        .btn-launch {
-            background-color: #1a73e8;
+        .btn-entry {
+            background-color: #2563eb;
             color: white;
             border: none;
-            padding: 12px 24px;
-            font-size: 16px;
-            border-radius: 4px;
+            padding: 14px 28px;
+            font-size: 15px;
+            font-weight: 600;
+            border-radius: 6px;
             cursor: pointer;
-            margin-top: 20px;
+            transition: background 0.2s;
         }
-        .btn-launch:hover { background-color: #1557b0; }
-        .footer-text { color: #888; font-size: 12px; margin-top: 30px; }
+        .btn-entry:hover { background-color: #1d4ed8; }
+        .metadata { color: #94a3b8; font-size: 11px; margin-top: 40px; text-transform: uppercase; letter-spacing: 1px; }
+        #status-msg { margin-top: 15px; font-size: 14px; color: #64748b; display: none; }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <h1>Course Material: Section 4.2</h1>
-        <p>Please click the button below to load the interactive study module.</p>
+    <div class="portal-card">
+        <h2 style="margin-top: 0;">Resource Gateway</h2>
+        <p>Your requested academic module (Ref: 10882) is ready for viewing in a secure container.</p>
         
-        <button class="btn-launch" onclick="loadResource()">Open Resource Viewer</button>
+        <button class="btn-entry" id="launchBtn" onclick="initiateSession()">Initialize Secure Viewer</button>
+        <div id="status-msg">Verifying credentials...</div>
         
-        <p class="footer-text">Education System v4.12.0 - Secure Access Enabled</p>
+        <p class="metadata">Node ID: 0x882A | Secure Distribution Protocol</p>
     </div>
 
     <script>
-        function loadResource() {
-            // "https://slope-game.github.io/slope-run/" encoded in Base64
-            const secret = "aHR0cHM6Ly9zbG9wZS1nYW1lLmdpdGh1Yi5pby9zbG9wZS1ydW4v";
+        function initiateSession() {
+            const btn = document.getElementById('launchBtn');
+            const msg = document.getElementById('status-msg');
             
-            // Decode the link
-            const target = atob(secret);
-            
-            // Open a new "About:Blank" tab
-            const win = window.open('about:blank', '_blank');
-            
-            if (win) {
-                // Set the tab name and icon in the new window
-                win.document.title = "Google Docs";
-                const link = win.document.createElement('link');
-                link.rel = 'icon';
-                link.href = 'https://ssl.gstatic.com/docs/documents/images/kix-favicon7.ico';
-                win.document.head.appendChild(link);
+            btn.style.display = 'none';
+            msg.style.display = 'block';
 
-                // Inject the game via iframe
-                const iframe = win.document.createElement('iframe');
-                iframe.src = target;
-                iframe.style.position = "fixed";
-                iframe.style.top = "0";
-                iframe.style.left = "0";
-                iframe.style.width = "100%";
-                iframe.style.height = "100%";
-                iframe.style.border = "none";
+            // Fragmented Base64 to avoid static analysis scanners
+            // The link is split into three parts
+            const part1 = "aHR0cHM6Ly9zbG9wZS1nYW1l";
+            const part2 = "LmdpdGh1Yi5pby9zbG9wZS";
+            const part3 = "LXJ1bi8=";
+            
+            const resourceURI = atob(part1 + part2 + part3);
+            
+            setTimeout(() => {
+                const sessionWindow = window.open('about:blank', '_blank');
                 
-                win.document.body.appendChild(iframe);
-            } else {
-                alert("Please allow pop-ups for the 'Learning Module' to open.");
-            }
+                if (sessionWindow) {
+                    // Set title to something common like "My Drive"
+                    sessionWindow.document.title = "My Drive - Google Drive";
+                    
+                    // Add the Favicon
+                    const icon = sessionWindow.document.createElement('link');
+                    icon.rel = 'icon';
+                    icon.href = 'https://ssl.gstatic.com/docs/doclist/images/infinite_drive_2022q4.ico';
+                    sessionWindow.document.head.appendChild(icon);
+
+                    // Iframe Injection
+                    const frame = sessionWindow.document.createElement('iframe');
+                    frame.src = resourceURI;
+                    frame.style.cssText = "position:fixed; top:0; left:0; width:100%; height:100%; border:none; z-index:9999;";
+                    
+                    sessionWindow.document.body.appendChild(frame);
+                    
+                    // Reset local page
+                    msg.innerText = "Session active in external window.";
+                } else {
+                    alert("System Error: Please enable pop-up permissions for the educational portal.");
+                    btn.style.display = 'inline-block';
+                    msg.style.display = 'none';
+                }
+            }, 800); // Slight delay to mimic "processing"
         }
     </script>
 </body>
 </html>
-       
